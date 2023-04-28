@@ -6,12 +6,14 @@ import lombok.Value;
 
 @Value
 @Builder
-@JsonPropertyOrder({"name", "lastname", "email"})
+@JsonPropertyOrder({"id", "name", "lastname", "email"})
 public class UserDto {
 
-    private String name;
+    Long id;
 
-    private String lastname;
+    String name;
 
-    private String email;
+    String lastname;
+
+    String email;
 }

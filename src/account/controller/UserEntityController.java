@@ -1,29 +1,31 @@
 package account.controller;
 
-import account.exceptions.UserAlreadyExistsException;
 import account.model.UserEntity;
 import account.model.dto.UserDto;
 import account.service.UserEntityService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class UserEntityController {
 
     @Autowired
     private UserEntityService userEntityService;
 
-    @PostMapping("/signup")
-    public ResponseEntity<UserDto> registerUser(@RequestBody @Valid UserEntity user) throws UserAlreadyExistsException {
-        UserDto register = userEntityService.register(user);
-        return ResponseEntity.ok().body(register);
+    @PostMapping(value = {"/auth/signup", "/auth/signup/"})
+    public ResponseEntity<Object> registerUser(@Valid @RequestBody UserEntity user) {
+        return userEntityService.register(user);
+    }
+
+    @GetMapping("/empl/payment")
+    public UserDto getUserInfo(@AuthenticationPrincipal UserEntity user) {
+        return userEntityService.getUser(user);
     }
 }
