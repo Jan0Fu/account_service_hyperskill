@@ -22,7 +22,7 @@ public class UserEntityController {
 
     @PostMapping(value = {"/auth/signup", "/auth/signup/"})
     public ResponseEntity<Object> registerUser(@Valid @RequestBody UserEntity user) {
-        return userEntityService.register(user);
+        return userEntityService.registerUser(user);
     }
 
     @PostMapping("/auth/changepass")

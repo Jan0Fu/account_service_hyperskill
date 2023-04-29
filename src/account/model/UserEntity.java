@@ -1,5 +1,7 @@
 package account.model;
 
+import account.validator.BreachedConstraint;
+import account.validator.LengthConstraint;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
@@ -33,7 +35,8 @@ public class UserEntity implements UserDetails {
     @Pattern(regexp = ".*@acme.com$")
     private String email;
     @NotBlank
-    @Size(min = 12)
+    @LengthConstraint
+    @BreachedConstraint
     private String password;
     @Enumerated(EnumType.STRING)
     @JsonIgnore

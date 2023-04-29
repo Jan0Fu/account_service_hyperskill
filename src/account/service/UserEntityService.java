@@ -1,13 +1,12 @@
 package account.service;
 
 import account.model.UserEntity;
-import account.model.dto.ChangePasswordRequest;
 import account.model.dto.UserDto;
 import org.springframework.http.ResponseEntity;
 
 public interface UserEntityService {
 
-    ResponseEntity<Object> register(UserEntity user);
+    ResponseEntity<Object> registerUser(UserEntity user);
 
     UserDto getUser(UserEntity user);
 
