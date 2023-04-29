@@ -1,6 +1,7 @@
 package account.controller;
 
 import account.model.UserEntity;
+import account.model.dto.ChangePasswordRequest;
 import account.model.dto.UserDto;
 import account.service.UserEntityService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,12 @@ public class UserEntityController {
     @PostMapping(value = {"/auth/signup", "/auth/signup/"})
     public ResponseEntity<Object> registerUser(@Valid @RequestBody UserEntity user) {
         return userEntityService.register(user);
+    }
+
+    @PostMapping("/auth/changepass")
+    public ResponseEntity<Object> changePassword(@Valid @RequestBody ChangePasswordRequest password,
+                                                 @AuthenticationPrincipal UserEntity user) {
+        return userEntityService.changePassword(password.getNew_password(), user.getEmail());
     }
 
     @GetMapping("/empl/payment")
