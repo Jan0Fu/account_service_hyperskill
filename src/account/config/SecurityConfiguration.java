@@ -25,8 +25,8 @@ public class SecurityConfiguration {
         http
                 .authorizeRequests()
                 .mvcMatchers(HttpMethod.POST, "/api/auth/signup", "/actuator/shutdown").permitAll()
-                .mvcMatchers(HttpMethod.POST, "/api/auth/changepass").hasAuthority("USER")
-                .mvcMatchers(HttpMethod.GET, "/api/empl/payment").hasAuthority("USER")
+                .mvcMatchers("/api/acct/payments").permitAll()
+                .anyRequest().authenticated()
                 .and()
                 .csrf().disable()
                 .httpBasic();

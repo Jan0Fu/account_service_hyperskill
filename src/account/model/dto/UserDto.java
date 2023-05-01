@@ -1,19 +1,29 @@
 package account.model.dto;
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import lombok.Builder;
-import lombok.Value;
+import account.model.UserEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-@Value
-@Builder
-@JsonPropertyOrder({"id", "name", "lastname", "email"})
+import java.util.ArrayList;
+import java.util.List;
+
+@Getter
+@AllArgsConstructor
 public class UserDto {
 
-    Long id;
+    private final Long id;
+    private final String name;
+    private final String lastname;
+    private final String email;
+    @JsonIgnore
+    private final List<String> roles;
 
-    String name;
-
-    String lastname;
-
-    String email;
+    public UserDto(UserEntity user) {
+        this.id = user.getId();
+        this.name = user.getName();
+        this.lastname = user.getLastname();
+        this.email = user.getEmail();
+        this.roles = new ArrayList<>(user.getRoles());
+    }
 }

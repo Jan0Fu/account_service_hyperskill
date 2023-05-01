@@ -1,6 +1,5 @@
 package account.service;
 
-import account.model.Role;
 import account.model.UserEntity;
 import account.model.dto.UserDto;
 import account.repository.UserEntityRepository;
@@ -18,23 +17,21 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserEntityService {
 
+    private static final Map<String, String> ROLES = Map.of(
+            "USER", "ROLE_USER",
+            "ADMINISTRATOR", "ROLE_ADMINISTRATOR",
+            "ACCOUNTANT", "ROLE_ACCOUNTANT",
+            "AUDITOR", "ROLE_AUDITOR"
+    );
     private final UserEntityRepository userEntityRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public ResponseEntity<Object> registerUser(UserEntity user) throws ResponseStatusException {
+    public UserDto registerUser(UserEntity user) throws ResponseStatusException {
         if (userEntityRepository.existsByEmailIgnoreCase(user.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User exist!");
         }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setEmail(user.getEmail().toLowerCase());
-        user.setRole(Role.USER);
-        UserEntity newUser = userEntityRepository.save(user);
-        return ResponseEntity.ok().body(UserDto.builder()
-                .id(newUser.getId())
-                .name(newUser.getName())
-                .lastname(newUser.getLastname())
-                .email(newUser.getEmail()).build());
+        return new UserDto(userEntityRepository.save(createUser(userEntityRepository.findAll().isEmpty(), user)));
     }
 
     @Override
@@ -43,16 +40,13 @@ public class UserServiceImpl implements UserEntityService {
         savePassword(user.get(), password);
         return ResponseEntity.ok().body(Map.of("status", "The password has been updated successfully",
                 "email", user.get().getEmail()));
-
     }
 
-    @Override
-    public UserDto getUser(UserEntity user) {
-        return UserDto.builder()
-                    .id(user.getId())
-                    .name(user.getName())
-                    .lastname(user.getLastname())
-                    .email(user.getEmail()).build();
+    public UserEntity createUser(boolean isFirst, UserEntity user) {
+        user.addRole(isFirst ? ROLES.get("ADMINISTRATOR") : ROLES.get("USER"));
+        user.setEmail(user.getEmail().toLowerCase());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return user;
     }
 
     public void savePassword(UserEntity user, String password) throws ResponseStatusException {
@@ -61,5 +55,12 @@ public class UserServiceImpl implements UserEntityService {
         }
         user.setPassword(passwordEncoder.encode(password));
         userEntityRepository.save(user);
+    }
+
+    @Override
+    public UserEntity findUserByEmail(String email) throws ResponseStatusException {
+        return userEntityRepository
+                .findByEmailIgnoreCase(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User doesn't exist"));
     }
 }

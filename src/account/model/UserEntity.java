@@ -1,7 +1,6 @@
 package account.model;
 
-import account.validator.BreachedConstraint;
-import account.validator.LengthConstraint;
+import account.validator.ValidPassword;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
@@ -12,9 +11,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @AllArgsConstructor
@@ -35,16 +35,28 @@ public class UserEntity implements UserDetails {
     @Pattern(regexp = ".*@acme.com$")
     private String email;
     @NotBlank
-    @LengthConstraint
-    @BreachedConstraint
+    @ValidPassword
     private String password;
-    @Enumerated(EnumType.STRING)
+    @ElementCollection(fetch = FetchType.EAGER)
     @JsonIgnore
-    private Role role;
+    private List<String> roles = new ArrayList<>();
+
+    public void addRole(String role) {
+        roles.add(role);
+    }
+
+    public void removeRole(String role) {
+        roles.remove(role);
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
     }
 
     @Override
