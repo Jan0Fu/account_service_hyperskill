@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
@@ -21,6 +22,7 @@ public class Employee {
     private String employee;
     @NotBlank
     private String period;
-    @Min(value = 0, message = "Salary must be non negative!")
+    @NotNull
+    @Min(value = 1, message = "Salary must be non negative!")
     private Long salary;
 }

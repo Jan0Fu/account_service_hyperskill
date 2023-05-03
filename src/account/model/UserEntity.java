@@ -11,21 +11,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Entity
-@AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Table(name = "users")
 public class UserEntity implements UserDetails {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
     @NotBlank
     private String name;
@@ -35,23 +30,26 @@ public class UserEntity implements UserDetails {
     @Pattern(regexp = ".*@acme.com$")
     private String email;
     @NotBlank
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ValidPassword
     private String password;
     @ElementCollection(fetch = FetchType.EAGER)
-    @JsonIgnore
-    private List<String> roles = new ArrayList<>();
+    @Enumerated(EnumType.STRING)
+    private List<Role> roles = new ArrayList<>();
 
-    public void addRole(String role) {
+    @Override
+    public List<GrantedAuthority> getAuthorities(){
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        roles.forEach(role -> authorities.add(new SimpleGrantedAuthority(role.toString())));
+        return authorities;
+    }
+
+    public void addRole(Role role) {
         roles.add(role);
     }
 
-    public void removeRole(String role) {
+    public void removeRole(Role role) {
         roles.remove(role);
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     }
 
     @Override
@@ -60,6 +58,7 @@ public class UserEntity implements UserDetails {
     }
 
     @Override
+    @JsonIgnore
     public String getUsername() {
         return email;
     }
