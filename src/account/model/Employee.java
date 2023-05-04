@@ -18,11 +18,11 @@ public class Employee {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private long id;
-    @NotBlank
+    @NotBlank(message = "Employee cannot be empty")
     private String employee;
-    @NotBlank
+    @NotBlank(message = "Period cannot be empty")
     private String period;
     @NotNull
-    @Min(value = 1, message = "Salary must be non negative!")
+    @Min(value = 0, message = "Salary must be non negative!")
     private Long salary;
 }

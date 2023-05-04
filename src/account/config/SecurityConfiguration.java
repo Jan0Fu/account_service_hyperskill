@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
@@ -23,17 +24,18 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .exceptionHandling().accessDeniedHandler(getAccessDeniedHandler())
-                .and()
                 .authorizeRequests()
                 .mvcMatchers("/api/auth/signup", "/actuator/shutdown").permitAll()
                 .mvcMatchers("/api/empl/payment").hasAnyRole("ACCOUNTANT", "USER")
                 .mvcMatchers("/api/acct/payments").hasRole("ACCOUNTANT")
                 .mvcMatchers("/api/admin/user/**").hasRole("ADMINISTRATOR")
+                .mvcMatchers("/api/security/**").hasRole("AUDITOR")
                 .anyRequest().authenticated()
                 .and()
+                .exceptionHandling().accessDeniedHandler(getAccessDeniedHandler())
+                .and()
                 .csrf().disable()
-                .httpBasic();
+                .httpBasic().authenticationEntryPoint(getAuthenticationEntryPoint());
 
         return http.build();
     }
@@ -46,6 +48,11 @@ public class SecurityConfiguration {
     @Bean
     public AccessDeniedHandler getAccessDeniedHandler() {
         return new CustomAccessDeniedHandler();
+    }
+
+    @Bean
+    public AuthenticationEntryPoint getAuthenticationEntryPoint() {
+        return new AuthEntryPointHandler();
     }
 
     @Bean

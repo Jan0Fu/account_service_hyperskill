@@ -1,6 +1,7 @@
 package account.service;
 
 import account.model.UserEntity;
+import account.model.dto.AccessChangeRequest;
 import account.model.dto.UserDto;
 import account.model.dto.UserRoleRequest;
 import org.springframework.http.ResponseEntity;
@@ -21,4 +22,6 @@ public interface UserEntityService {
     UserDto updateUserRole(UserRoleRequest roleRequest, UserEntity user);
 
     ResponseEntity<Object> deleteUser(String email, UserEntity user);
+
+    ResponseEntity<Object> setAccess(AccessChangeRequest access, UserEntity user);
 }

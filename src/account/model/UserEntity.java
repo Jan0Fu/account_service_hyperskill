@@ -18,21 +18,33 @@ import java.util.*;
 @Data
 @Table(name = "users")
 public class UserEntity implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
+
     @NotBlank
     private String name;
+
     @NotBlank
     private String lastname;
+
     @NotBlank
     @Pattern(regexp = ".*@acme.com$")
     private String email;
+
     @NotBlank
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ValidPassword
     private String password;
+
+    @JsonIgnore
+    private boolean isAccountNonLocked = true;
+
+    @JsonIgnore
+    private int failedLogins = 0;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     private List<Role> roles = new ArrayList<>();
@@ -53,6 +65,7 @@ public class UserEntity implements UserDetails {
     }
 
     @Override
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
@@ -70,7 +83,7 @@ public class UserEntity implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return isAccountNonLocked;
     }
 
     @Override
