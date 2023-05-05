@@ -37,8 +37,7 @@ public class AdminController {
     }
 
     @PutMapping("/user/access")
-    public ResponseEntity<Object> setAccess(@RequestBody AccessChangeRequest access,
-                                            @AuthenticationPrincipal UserEntity user) {
+    public ResponseEntity<Object> setAccess(@RequestBody AccessChangeRequest access, @AuthenticationPrincipal UserEntity user) {
         return userService.setAccess(access, user);
     }
 }

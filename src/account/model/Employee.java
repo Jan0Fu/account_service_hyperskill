@@ -14,14 +14,18 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "employees")
 public class Employee {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private long id;
+
     @NotBlank(message = "Employee cannot be empty")
     private String employee;
+
     @NotBlank(message = "Period cannot be empty")
     private String period;
+
     @NotNull
     @Min(value = 0, message = "Salary must be non negative!")
     private Long salary;

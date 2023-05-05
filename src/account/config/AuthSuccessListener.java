@@ -12,7 +12,6 @@ public class AuthSuccessListener implements ApplicationListener<AuthenticationSu
 
     private final LogService logService;
 
-
     @Override
     public void onApplicationEvent(AuthenticationSuccessEvent event) {
         String username = event.getAuthentication().getName();

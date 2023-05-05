@@ -77,8 +77,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public String formatPeriod(String period) {
         String[] periodArray = period.split("-");
         try {
-            String month = new DateFormatSymbols()
-                    .getMonths()[Integer.parseInt(periodArray[0]) - 1];
+            String month = new DateFormatSymbols().getMonths()[Integer.parseInt(periodArray[0]) - 1];
             return String.format("%s-%s", month, periodArray[1]);
         } catch (Exception e) {
             e.printStackTrace();
@@ -91,8 +90,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     public boolean isPayrollUnique(String employee, String period) {
-        return employeeRepository
-                .findEmployeeByEmployeeIgnoreCaseAndPeriod(employee, period).isEmpty();
+        return employeeRepository.findEmployeeByEmployeeIgnoreCaseAndPeriod(employee, period).isEmpty();
     }
 
     @Transactional

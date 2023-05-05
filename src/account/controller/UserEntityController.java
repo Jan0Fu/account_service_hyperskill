@@ -4,7 +4,6 @@ import account.model.UserEntity;
 import account.model.dto.ChangePasswordRequest;
 import account.model.dto.UserDto;
 import account.service.UserEntityService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
